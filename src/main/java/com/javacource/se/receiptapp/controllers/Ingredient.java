@@ -1,8 +1,10 @@
 package com.javacource.se.receiptapp.controllers;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
+
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
@@ -10,6 +12,7 @@ import javax.validation.constraints.Positive;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@EqualsAndHashCode
 
 public class Ingredient {
     @NotBlank(message = "Name is mandatory")
