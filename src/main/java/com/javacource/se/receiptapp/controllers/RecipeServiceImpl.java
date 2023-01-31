@@ -35,10 +35,16 @@ import java.util.stream.Collectors;
     public Collection<Recipe>getAll() {
         return recipeMap.values();
     }
+
     @Override
-    public Collection<Recipe>getAll(int page,int size) {
-        return recipeMap.values().stream().skip(long)size * (page - 1)).limit(size).collect(Collectors.toList());
+    public Collection<Recipe> getAll(int page, int size) {
+        return null;
     }
+
+    // @Override
+   // public Collection<Recipe>getAll(int page,int size) {
+        //return recipeMap.values().stream().skip(long)size * (page - 1)).limit(size).collect(Collectors.toList());
+    //}
     @Override
     public Recipe removeRecipe(int id) {
         if (recipeMap.containsKey(id)) {

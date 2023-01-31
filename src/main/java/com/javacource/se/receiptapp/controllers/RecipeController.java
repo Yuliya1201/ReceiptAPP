@@ -1,5 +1,16 @@
 package com.javacource.se.receiptapp.controllers;
-
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.validation.FieldError;
+import io.swagger.v3.oas.annotations.media.Content;
 import jdk.jfr.ContentType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -45,13 +56,13 @@ public class RecipeController {
     }
 
     @PutMapping("/{id}")
-    @Oparation(summary = "Изменение рецепта по id")
+    @Operation(summary = "Изменение рецепта по id")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
                     description = "Рецепт изменен",
                     content = {
-                            @ContentType(
+                            @ContentType (
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = Recipe.class)
                             )

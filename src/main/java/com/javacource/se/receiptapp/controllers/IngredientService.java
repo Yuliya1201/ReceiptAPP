@@ -7,5 +7,5 @@ public interface IngredientService {
     Ingredient getIngredient(Integer id);
     Collection<Ingredient> getAll();
     Ingredient removeIngredient(int id);
-    Ingredient updateIngredient(int id,Ingredient ingredient)
+    Ingredient updateIngredient(int id,Ingredient ingredient);
 }
