@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.webjars.NotFoundException;
 
 import javax.validation.Valid;
 import java.util.Collection;
@@ -99,8 +100,7 @@ public class RecipeController {
 return errors;
     }
 
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(Exception notFoundException) {
-        return Exception.getMessage();
+    @ExceptionHandler(NotFoundException notFoundException) {
+        return NotFoundException.getMessage();
     }
 }

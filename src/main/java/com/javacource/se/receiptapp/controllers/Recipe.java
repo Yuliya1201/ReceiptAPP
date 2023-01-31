@@ -1,8 +1,5 @@
 package com.javacource.se.receiptapp.controllers;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 import javax.validation.constraints.Positive;
@@ -17,6 +14,7 @@ import javax.validation.constraints.NotEmpty;
 public class Recipe {
     @NotBlank
     private String name;
+    private Integer id;
     @Positive
     private Integer cookingTime;
     @NotEmpty

@@ -1,5 +1,14 @@
 package com.javacource.se.receiptapp.controllers;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.media.Content;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import com.fasterxml.jackson.databind.jsonschema.JsonSerializableSchema;
 import jdk.jfr.ContentType;
 import jdk.jfr.Percentage;
@@ -55,9 +64,7 @@ public class IngredientController {
         }
 )
 })
-public  Collection<Ingredient> getAll() {
-        return this.ingredientService.getAll();
-    }
+
     @PutMapping("/{id")
     @Operation(summary = "изменеие ингредиентов по id")
     @ApiResponses(value = {
@@ -90,11 +97,13 @@ public  Collection<Ingredient> getAll() {
                     }
             )
     })
+
     public Collection<Ingredient> getAll() {
         return this.ingredientService.getAll();
+
     }
     @PostMapping("/{id}")
-    @Oparation(summary = "Изменение ингредиентов по id")
+    @Operation(summary = "Изменение ингредиентов по id")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
