@@ -1,6 +1,4 @@
 package com.javacource.se.receiptapp.controllers;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -10,12 +8,10 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.validation.FieldError;
-import io.swagger.v3.oas.annotations.media.Content;
 import jdk.jfr.ContentType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
@@ -45,7 +41,7 @@ public class RecipeController {
     @GetMapping("/all")
     @Operation(summary = "Получение всех рецептов",description = "Поиск производится без параметров")
     @ApiResponses(value = {@ApiResponse(responseCode ="200",description = "Рецепты получены")})
-    ResponseEntity<Collection<Recipe>> getRecipes() {return ResponseEntity.ok(recipeService.getAll());
+    ResponseEntity<Collection<Map<Integer, Recipe>>> getRecipes() {return ResponseEntity.ok(recipeService.getAll());
     }
 
     @PostMapping
@@ -86,7 +82,7 @@ public class RecipeController {
             )
     })
     @Parameters(value ={@Parameter(name = "id", example = "1")})
-    ResponseEntity<Recipe> removeRecipe(@PathVariable Integer id) {
+    ResponseEntity<Map<Integer, Recipe>> removeRecipe(@PathVariable Integer id) {
         return ResponseEntity.ok(recipeService.removeRecipe(id));
     }
 
@@ -94,7 +90,7 @@ public class RecipeController {
     @GetMapping
     @Operation(summary = "Получение всех рецептов", description = "Поиск производится без параметров")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Рецепты получены")})
-    ResponseEntity<Collection<Recipe>> getRecipeByIngredientId() {
+    ResponseEntity<Collection<Map<Integer, Recipe>>> getRecipeByIngredientId() {
         return ResponseEntity.ok(recipeService.getAll());
     }
 
