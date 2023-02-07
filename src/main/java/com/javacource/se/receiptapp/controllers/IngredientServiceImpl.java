@@ -1,47 +1,35 @@
 package com.javacource.se.receiptapp.controllers;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.javacource.se.receiptapp.FileService.FilesService;
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Qualifier;
+import com.javacource.se.receiptapp.exception.FileProcessingException;
+import com.javacource.se.receiptapp.FileService.FilesService;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import org.webjars.NotFoundException;
 import java.util.Collection;
-import java.util.LinkedHashMap;
+import com.javacource.se.receiptapp.exception.IngredientExistsException;
+
+
+import java.util.HashMap;
 import java.util.Map;
+
 @Service
 public class IngredientServiceImpl implements IngredientService {
-    final private FilesService filesService;
-    private static Map<Integer, Ingredient> ingredientMap = new LinkedHashMap<>();
-    private static Integer id = 0;
+    private final FilesService filesService;
 
-    public IngredientServiceImpl(FilesService filesService) {
+    public IngredientServiceImpl(@Qualifier("ingredientFileService") FilesService filesService) {
         this.filesService = filesService;
     }
-    @PostConstruct
-    private void init() {
-        readFromFileIngredient();
-    }
-    @Override
-    public boolean cleanDataFileIngredient() {
-        try {
-            Path path = Path.of(dataFilePath,dataIngredientFileName);
-            Files.deleteIfExists(path);
-            Files.createFile(path);
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
+
+
+    private Map<Integer, Ingredient> ingredientMap = new HashMap<>();
+    private static Integer id = 0;
 
     @Override
     public Ingredient putNewIngredient(Ingredient ingredient) {
-        ingredientMap.put(id++,ingredient);
+        ingredientMap.put(id++, ingredient);
         saveToFileIngredient();
         return ingredient;
     }
@@ -50,23 +38,45 @@ public class IngredientServiceImpl implements IngredientService {
     @Override
     public Ingredient addIngredient(Ingredient ingredient) {
         if (ingredientMap.containsValue(ingredient)) {
-            throw new RuntimeException();
+            throw new IngredientExistsException();
         }
         ingredientMap.put(id++, ingredient);
+        saveToFileIngredient();
         return ingredient;
     }
+    public void saveToFileIngredient() throws FileProcessingException {
+        try {
+            String json = new ObjectMapper().writeValueAsString(ingredientMap);
+            filesService.saveToFile(json);
+        } catch (JsonProcessingException e) {
+            throw new FileProcessingException("Файл не удалось сохранить");
+        }
+    }
+    @Override
+    public void readFromFileIngredient() throws FileProcessingException {
+        try {
+            String json = filesService.readFromFile();
+            ingredientMap = new ObjectMapper().readValue(json, new TypeReference<HashMap<Integer, Ingredient>>() {
+            });
+        } catch (JsonProcessingException e) {
+            throw new FileProcessingException("Файл не удалось прочитать");
+        }
+    }
+
 
     @Override
     public Ingredient getIngredient(Integer id) {
         if (!ingredientMap.containsKey(id)) {
-            throw new RuntimeException("Ингредиент с заданным id Не найден");
+            throw new NotFoundException("Ингредиент с заданным id Не найден");
         }
         return ingredientMap.get(id);
     }
+
     @Override
-    public Collection<Ingredient> getAll(){
+    public Collection<Ingredient> getAll() {
         return ingredientMap.values();
     }
+
     @Override
     public Ingredient removeIngredient(int id) {
         if (!ingredientMap.containsKey(id)) {
@@ -74,15 +84,22 @@ public class IngredientServiceImpl implements IngredientService {
         }
         return ingredientMap.remove(id);
     }
+
     @Override
-    public Ingredient updateIngredient(int id,Ingredient ingredient) {
+    public Ingredient updateIngredient(int id, Ingredient ingredient) {
         if (!ingredientMap.containsKey(id)) {
-            throw new RuntimeException("Ингредиент с заданным id не найден");
+            throw new NotFoundException("Ингредиент с заданным id не найден");
         }
-        ingredientMap.put(id,ingredient);
+        ingredientMap.put(id, ingredient);
         saveToFileIngredient();
         return ingredient;
     }
+    @PostConstruct
+    private void initIngredient() throws FileProcessingException {
+        readFromFileIngredient();
+    }
+
+
     @Override
     public boolean deleteIngredient(Integer id) {
         if (ingredientMap.containsKey(id)) {
@@ -91,22 +108,10 @@ public class IngredientServiceImpl implements IngredientService {
         }
         return false;
     }
-    private void saveToFileIngredient() {
-        try {
-            String json = new ObjectMapper().writeValueAsString(ingredientMap);
-            filesService.saveToFileIngredient(json);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    private void readFromFileIngredient() {
-        String json = filesService.readFromFileIngredient();
-        try {
-            ingredientMap = new ObjectMapper().readValue(json, new TypeReference<Map<Integer, Ingredient>>() {
-            });
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
+
+    @Override
+    public boolean cleanDataFile() {
+        return false;
+    }
 }

@@ -26,4 +26,5 @@ public interface RecipeService {
     Collection<Recipe>getByIngredientId(Integer ingredientId);
 
     boolean deleteRecipe(String name);
+
 }

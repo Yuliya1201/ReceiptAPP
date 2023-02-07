@@ -41,7 +41,8 @@ public class RecipeController {
     @GetMapping("/all")
     @Operation(summary = "Получение всех рецептов",description = "Поиск производится без параметров")
     @ApiResponses(value = {@ApiResponse(responseCode ="200",description = "Рецепты получены")})
-    ResponseEntity<Collection<Map<Integer, Recipe>>> getRecipes() {return ResponseEntity.ok(recipeService.getAll());
+    ResponseEntity<Collection<Map<Integer, Recipe>>> getRecipes() {
+        return ResponseEntity.ok(recipeService.getAll());
     }
 
     @PostMapping

@@ -50,7 +50,7 @@ public class IngredientController {
     Ingredient ingredient = ingredientService.getIngredient(id);
     return ResponseEntity.ok(ingredient);
 }
-@GetMapping
+
 @Operation(summary = "Добавление ингредиента")
 @ApiResponses(value = {
 @ApiResponses(
