@@ -6,15 +6,10 @@ import java.io.File;
 import java.util.Collection;
 
 public interface IngredientService {
-    Ingredient putNewIngredient(Integer ingredient);
-
-    boolean cleanDataFileIngredient();
 
     Ingredient putNewIngredient(Ingredient ingredient);
 
     Ingredient addIngredient(Ingredient ingredient);
-
-    void readFromFileIngredient() throws FileProcessingException;
 
     Ingredient getIngredient(Integer id);
     Collection<Ingredient> getAll();
@@ -24,7 +19,4 @@ public interface IngredientService {
 
     boolean deleteIngredient(Integer id);
 
-    boolean cleanDataFile();
-
-    File getDataFileTxt();
 }

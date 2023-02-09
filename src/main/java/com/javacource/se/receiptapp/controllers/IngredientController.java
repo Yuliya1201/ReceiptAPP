@@ -31,13 +31,13 @@ import java.util.Collection;
 @RestController
 @RequestMapping("/ingredient")
 @RequiredArgsConstructor
-@Percentage(name = "Ингредиенты",description = "CRUD-операции для работы с ингредиентами")
+@Tag(name = "Ингредиенты",description = "CRUD-операции для работы с ингредиентами")
 public class IngredientController {
     private final IngredientService ingredientService;
 
     @GetMapping("{Iid}")
     @Operation(
-            descrition = "Поиск ингредиента по id")
+            description = "Поиск ингредиента по id")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",description = "Ингредиент найден",content = {
@@ -45,31 +45,17 @@ public class IngredientController {
                                     (implementation = Ingredient.class))
             }
             )})
-    @Parameters(value {@Parameter(name = "id",example = "1")})
+    @Parameters(value= {@Parameter(name = "id",example = "1")})
     ResponseEntity<Ingredient> getIngredient(@PathVariable Integer id) {
     Ingredient ingredient = ingredientService.getIngredient(id);
     return ResponseEntity.ok(ingredient);
 }
 
-@Operation(summary = "Добавление ингредиента")
-@ApiResponses(value = {
-@ApiResponses(
-        responceCode = "200",
-        description = "Ингредиент добавлен",
-        content = {
-                @Content(
-                        mediaType = "application/json",
-                        schema = @Schema(implementation = Ingredient.class)
-                )
-        }
-)
-})
-
     @PutMapping("/{id")
     @Operation(summary = "изменеие ингредиентов по id")
     @ApiResponses(value = {
             @ApiResponse(
-                    responceCode = "200",
+                    responseCode = "200",
                     description = "Ингредиент изменен",
                     content = {
                             @ContentType(
@@ -128,7 +114,7 @@ public class IngredientController {
                     description = "Ингредиент удален"
             )
     })
-    @Parameter(value = {@Parameter(name = "id",example = "1")})
+    @Parameters(value = {@Parameter(name = "id",example = "1")})
     ResponseEntity<Ingredient>removeIngredient(@PathVariable Integer id) {
         return ResponseEntity.ok(ingredientService.removeIngredient(id));
     }

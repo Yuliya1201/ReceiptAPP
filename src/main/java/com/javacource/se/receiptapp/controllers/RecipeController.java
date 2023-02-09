@@ -1,4 +1,5 @@
 package com.javacource.se.receiptapp.controllers;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -19,13 +20,14 @@ import org.webjars.NotFoundException;
 import javax.validation.Valid;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 
 @RestController
 @RequestMapping("/recipe")
 @RequiredArgsConstructor
-@Tag(name = "Рецепты",descrition = "CRUD-операции для работы с рецептами")
+@Tag(name = "Рецепты",description = "CRUD-операции для работы с рецептами")
 
 public class RecipeController {
     private final RecipeService recipeService;
@@ -34,14 +36,15 @@ public class RecipeController {
             @ApiResponse(responseCode = "200",description = "Рецепт был найден")})
     @Parameters(value = {@Parameter(name = "id",example =  "1")})
     @GetMapping("/{id")
-    ResponseEntity<Recipe>getRecipe(@PathVariable Integer id) {
-        return ResponseEntity.ok(recipeService.getRecipe(id));
+    ResponseEntity<LinkedHashMap<Integer, Recipe>> getRecipe(@PathVariable Integer id) {
+
+        return  ResponseEntity.ok(recipeService.getRecipe(id));
     }
 
     @GetMapping("/all")
     @Operation(summary = "Получение всех рецептов",description = "Поиск производится без параметров")
     @ApiResponses(value = {@ApiResponse(responseCode ="200",description = "Рецепты получены")})
-    ResponseEntity<Collection<Map<Integer, Recipe>>> getRecipes() {
+    ResponseEntity<Collection<Recipe>> getRecipesByIngredientId() {
         return ResponseEntity.ok(recipeService.getAll());
     }
 
@@ -59,8 +62,8 @@ public class RecipeController {
                     responseCode = "200",
                     description = "Рецепт изменен",
                     content = {
-                            @ContentType (
-                                    mediaType = "application/json",
+                            @ContentType
+                                    (mediaType = "application/json",
                                     schema = @Schema(implementation = Recipe.class)
                             )
                     }
@@ -91,7 +94,7 @@ public class RecipeController {
     @GetMapping
     @Operation(summary = "Получение всех рецептов", description = "Поиск производится без параметров")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Рецепты получены")})
-    ResponseEntity<Collection<Map<Integer, Recipe>>> getRecipeByIngredientId() {
+    ResponseEntity<Collection<Recipe>> getRecipeByIngredientId() {
         return ResponseEntity.ok(recipeService.getAll());
     }
 
@@ -100,15 +103,17 @@ public class RecipeController {
     public Map<String, String> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach(error) ->{
+        ex.getBindingResult().getAllErrors().forEach((error) ->{
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
 return errors;
     }
+    @ResponseStatus(HttpStatus.NOT_FOUND)
 
-    @ExceptionHandler(NotFoundException notFoundException) {
-        return NotFoundException.getMessage();
+    @ExceptionHandler(NotFoundException.class)
+    public String handleNotFoundException(NotFoundException notFoundException) {
+        return notFoundException.getMessage();
     }
 }
