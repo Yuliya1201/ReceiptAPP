@@ -41,8 +41,8 @@ public class IngredientController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",description = "Ингредиент найден",content = {
-                            @ContentType(mediaType = "application/json",schema = @Schema
-                                    (implementation = Ingredient.class))
+                    @ContentType(mediaType = "application/json", schema = @Schema
+                            (implementation = Ingredient.class))
             }
             )})
     @Parameters(value= {@Parameter(name = "id",example = "1")})
