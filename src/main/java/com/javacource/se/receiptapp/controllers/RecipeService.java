@@ -6,12 +6,10 @@ public interface RecipeService {
     Recipe addRecipe(Recipe recipe);
     Recipe getRecipe(Integer id);
 
-    Collection<Recipe>getAll(int page, int size);
+    Recipe updateRecipe(int id, Recipe recipe);
 
-    Recipe removeRecipe(String name);
+    Collection<Recipe> getAll();
 
-    Recipe updateRecipe(Integer id, Recipe recipe);
-
-    boolean deleteRecipe(String name);
+    Recipe removeRecipe(int id);
 
 }

@@ -28,37 +28,37 @@ import java.util.Map;
 import java.util.Collection;
 
 
+
 @RestController
 @RequestMapping("/ingredient")
 @RequiredArgsConstructor
-@Tag(name = "Ингредиенты",description = "CRUD-операции для работы с ингредиентами")
+@Tag(name = "Ингредиенты", description = "CRUD-операции для работы с ингредиентами")
 public class IngredientController {
+
     private final IngredientService ingredientService;
 
-    @GetMapping("{Iid}")
+    @GetMapping("/{id}")
     @Operation(
             description = "Поиск ингредиента по id")
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "200",description = "Ингредиент найден",content = {
-                    @ContentType(mediaType = "application/json", schema = @Schema
-                            (implementation = Ingredient.class))
+                    responseCode = "200", description = "Ингредиент  найден", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = Ingredient.class))
             }
             )})
-    @Parameters(value= {@Parameter(name = "id",example = "1")})
+    @Parameters(value = {@Parameter(name = "id", example = "1")})
     ResponseEntity<Ingredient> getIngredient(@PathVariable Integer id) {
-    Ingredient ingredient = ingredientService.getIngredient(id);
-    return ResponseEntity.ok(ingredient);
-}
+        Ingredient ingredient = ingredientService.getIngredient(id);
+        return ResponseEntity.ok(ingredient);
+    }
 
-    @PutMapping("/{id")
-    @Operation(summary = "изменеие ингредиентов по id")
+    @Operation(summary = "Добавление ингредиента")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Ингредиент изменен",
+                    description = "Ингредиент добален",
                     content = {
-                            @ContentType(
+                            @Content(
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = Ingredient.class)
                             )
@@ -66,9 +66,10 @@ public class IngredientController {
             )
     })
     @PostMapping
-    ResponseEntity<Ingredient>addIngredient(@Valid @RequestBody Ingredient ingredient) {
+    ResponseEntity<Ingredient> addIngredient(@Valid @RequestBody Ingredient ingredient)  {
         return ResponseEntity.ok(ingredientService.addIngredient(ingredient));
     }
+
     @GetMapping
     @Operation(summary = "Получение всех ингредиентов")
     @ApiResponses(value = {
@@ -76,36 +77,36 @@ public class IngredientController {
                     responseCode = "200",
                     description = "Ингредиенты получены",
                     content = {
-                            @ContentType(
+                            @Content(
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = Ingredient.class)
                             )
                     }
             )
     })
-
     public Collection<Ingredient> getAll() {
         return this.ingredientService.getAll();
-
     }
-    @PostMapping("/{id}")
+
+    @PutMapping("/{id}")
     @Operation(summary = "Изменение ингредиентов по id")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
                     description = "Ингредиент изменен",
                     content = {
-                            @ContentType(
+                            @Content(
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = Ingredient.class)
                             )
                     }
             )
     })
-    @Parameters(value = {@Parameter(name = "id",example = "1")})
-    ResponseEntity<Ingredient>updateIngredient(@PathVariable Integer id, @Valid @RequestBody Ingredient ingredient) {
-        return ResponseEntity.ok(ingredientService.updateIngredient(id,ingredient));
+    @Parameters(value = {@Parameter(name = "id", example = "1")})
+    ResponseEntity<Ingredient> updateIngredient(@PathVariable Integer id, @Valid @RequestBody Ingredient ingredient) {
+        return ResponseEntity.ok(ingredientService.updateIngredient(id, ingredient));
     }
+
     @DeleteMapping("/{id}")
     @Operation(summary = "Удаление ингредиентов по id")
     @ApiResponses(value = {
@@ -114,20 +115,10 @@ public class IngredientController {
                     description = "Ингредиент удален"
             )
     })
-    @Parameters(value = {@Parameter(name = "id",example = "1")})
-    ResponseEntity<Ingredient>removeIngredient(@PathVariable Integer id) {
+    @Parameters(value = {@Parameter(name = "id", example = "1")})
+    ResponseEntity<Ingredient> removeIngredient(@PathVariable Integer id) {
         return ResponseEntity.ok(ingredientService.removeIngredient(id));
     }
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String,String>handleValidationExceptions(
-            MethodArgumentNotValidException ex) {
-        Map<String,String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName,errorMessage);
-        });
-        return errors;
-    }
+
 }
+

@@ -1,35 +1,36 @@
 package com.javacource.se.receiptapp.controllers;
-import org.springframework.beans.factory.annotation.Value;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
+import org.springframework.beans.factory.annotation.Qualifier;
+import com.javacource.se.receiptapp.exception.FileProcessingException;
+import com.javacource.se.receiptapp.FileService.FilesService;
 
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collection;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
-@Service("recipeFleService")
 
-    public class RecipeServiceImpl implements RecipeService {
-    @Value("${path.to.files}")
-    private String dataFilePathIngredient;
-    @Value("${name.of.recipe.file}")
-    private String dataRecipeFileName;
+@Service
+public class RecipeServiceImpl implements RecipeService {
 
+    private final FilesService fileService;
 
-    private final RecipeService recipeService;
-    private final Map<Integer, Recipe> recipeMap = new LinkedHashMap<>();
+    private Map<Integer, Recipe> recipeMap = new HashMap<>();
     private static Integer id = 0;
+
+    public RecipeServiceImpl(@Qualifier("recipeFileService") FilesService fileService) {
+        this.fileService = fileService;
+    }
 
     @Override
     public Recipe addRecipe(Recipe recipe) {
-        recipe.setId(id);
         recipeMap.put(id++, recipe);
+        saveToFileRecipe();
         return recipe;
-    }
-
-    public RecipeServiceImpl(RecipeService recipeService) {
-        this.recipeService = recipeService;
     }
 
     @Override
@@ -41,33 +42,51 @@ import java.util.Map;
     }
 
     @Override
-    public Collection<Recipe> getAll(int page, int size) {
+    public Collection<Recipe> getAll() {
         return recipeMap.values();
     }
 
     @Override
-    public Recipe removeRecipe(String name) {
-        if (recipeMap.containsKey(id)) {
+    public Recipe removeRecipe(int id) {
+        if (!recipeMap.containsKey(id)) {
             throw new NotFoundException("рецепт с заданным id не найден");
         }
-        return recipeMap.remove(id);
+        Recipe removedRecipe = recipeMap.remove(id);
+        saveToFileRecipe();
+        return removedRecipe;
     }
 
     @Override
-    public Recipe updateRecipe(Integer id, Recipe recipe) {
+    public Recipe updateRecipe(int id, Recipe recipe) {
         if (recipeMap.containsKey(id)) {
             throw new NotFoundException("рецепт с заданным id не найден");
         }
         recipeMap.put(id, recipe);
+        saveToFileRecipe();
         return recipe;
     }
 
-   // @Override
-   // public boolean deleteRecipe(String name) {
-   //     if (recipeMap.containsKey(id)) {
-   //          recipeMap.remove(id);
-   //         return true;
+    @PostConstruct
+    private void initRecipe() throws FileProcessingException {
+        readFromFileRecipe();
+    }
+
+    private void readFromFileRecipe() throws FileProcessingException {
+        try {
+            String json = fileService.readFromFile();
+            recipeMap = new ObjectMapper().readValue(json, new TypeReference<HashMap<Integer, Recipe>>() {
+            });
+        } catch (JsonProcessingException e) {
+            throw new FileProcessingException("Файл не удалось прочитать");
         }
-        return false;
+    }
+
+    private void saveToFileRecipe() throws FileProcessingException {
+        try {
+            String json = new ObjectMapper().writeValueAsString(recipeMap);
+            fileService.saveToFile(json);
+        } catch (JsonProcessingException e) {
+            throw new FileProcessingException("Файл не удалось сохранить");
+        }
     }
 }

@@ -11,6 +11,8 @@ public interface IngredientService {
 
     Ingredient addIngredient(Ingredient ingredient);
 
+    void readFromFileIngredient() throws FileProcessingException;
+
     Ingredient getIngredient(Integer id);
     Collection<Ingredient> getAll();
     Ingredient removeIngredient(int id);
